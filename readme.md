@@ -71,57 +71,27 @@ Vue 3 + Element Plus 机甲风主题，仪表盘 / 站点管理 / 投稿审核 /
 
 ## 四、5 分钟部署
 
-### 方式一：一键脚本（推荐）
+### 方式一：一键脚本
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/MAX-A9/free-token/main/install.sh | sh
 ```
 
-脚本自动检查 Docker、拉取镜像、生成随机管理员密码、启动容器并打印访问地址 / 账号 / 密码。**重复执行即为升级**：自动检测已有容器，保留数据与密码。支持 `PORT=8080 sh ...` 指定端口、`LICENSE_KEY=授权码` 安装时直接激活。
+脚本自动检查 Docker、拉取镜像、生成随机管理员密码、启动容器并打印访问地址 / 账号 / 密码。**重复执行即为升级**：自动检测已有容器，保留数据与密码。
 
-### 方式二：手动一条命令
-
-```bash
-docker run -d --name freetoken -p 3000:3000 \
-  -v freetoken-data:/data \
-  -e DB_PATH=/data/freetoken.db \
-  -e ADMIN_PASSWORD=你的强密码 \
-  --restart unless-stopped \
-  ghcr.io/max-a9/freetoken:latest
-```
-
-数据保存在 `freetoken-data` 卷。升级：`docker pull ghcr.io/max-a9/freetoken:latest`，`docker rm -f freetoken` 后重新执行上面命令，数据自动继承。
-
-### 方式三：Docker Compose
-
-```yaml
-services:
-  freetoken:
-    image: ghcr.io/max-a9/freetoken:latest
-    container_name: freetoken
-    ports: ["3000:3000"]
-    volumes: ["./data:/data"]
-    environment:
-      - PORT=3000
-      - DB_PATH=/data/freetoken.db
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?请先设置 ADMIN_PASSWORD，如 export ADMIN_PASSWORD=你的强密码}
-      - SITE_URL=${SITE_URL:-http://localhost:3000}
-    restart: unless-stopped
-```
-
-```bash
-ADMIN_PASSWORD=你的强密码 docker compose up -d
-```
-
-首次启动自动完成：建库（SQLite 单文件）→ 导入 68 个种子站点 → 创建管理员 → 生成 JWT 密钥，全程无需手动初始化。未填授权码时，首次打开站点会自动跳转激活页，填入授权码即可使用。
-
-常用环境变量：`PORT`（默认 3000）、`DB_PATH`、`ADMIN_PASSWORD`（必填）、`LICENSE_KEY`（授权码，不填则在激活页输入）、`SITE_NAME`、`SITE_URL`（SEO 必填）、`MAX_STATIONS`（站点上限，0 不限）。
+- 进阶用法：`PORT=8080 sh ...` 指定宿主机端口；`LICENSE_KEY=授权码 sh ...` 安装时直接激活
+- 首次启动自动完成：建库（SQLite 单文件）→ 导入 68 个种子站点 → 创建管理员 → 生成 JWT 密钥，全程无需手动初始化
+- 未填授权码时，首次打开站点会自动跳转激活页，填入授权码即可使用
 
 ### 数据与升级
 
-- **数据安全**：数据保存在 `freetoken-data` 卷（compose 方式为 `./data` 目录），升级、重建容器均不丢失
-- **升级**：重新执行一键脚本（自动保留数据与密码），或拉取新镜像后重建容器
-- **备份**：SQLite 单文件，`cp` 即备份——compose 部署直接复制 `./data/freetoken.db`，脚本部署可从 `freetoken-data` 卷拷出
+- **数据安全**：数据保存在 Docker 卷 `freetoken-data`，升级、重建容器均不丢失
+- **升级**：重新执行安装脚本即可（自动保留数据与密码）
+- **备份**：SQLite 单文件，从卷中拷出即备份：
+
+```bash
+docker run --rm -v freetoken-data:/data -v $(pwd):/backup alpine cp /data/freetoken.db /backup/
+```
 
 ## 五、适用场景
 
