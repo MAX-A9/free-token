@@ -10,15 +10,10 @@
 ## 快速开始
 
 ```bash
-docker run -d --name freetoken -p 3000:3000 \
-  -v freetoken-data:/data \
-  -e DB_PATH=/data/freetoken.db \
-  -e ADMIN_PASSWORD=你的强密码 \
-  --restart unless-stopped \
-  ghcr.io/max-a9/freetoken:latest
+curl -fsSL https://raw.githubusercontent.com/MAX-A9/free-token/main/install.sh | sh
 ```
 
-启动后访问 `http://服务器IP:3000`，首次启动自动完成初始化，在激活页填入授权码即可使用（无需其它配置），管理后台在 `/admin`。
+脚本自动完成：拉取镜像 → 生成随机管理员密码 → 启动容器 → 打印访问地址与账号密码。首次打开站点，按页面提示输入授权码即可完成激活。
 
 ---
 
@@ -76,7 +71,15 @@ Vue 3 + Element Plus 机甲风主题，仪表盘 / 站点管理 / 投稿审核 /
 
 ## 四、5 分钟部署
 
-### 方式一：一条命令（推荐）
+### 方式一：一键脚本（推荐）
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/MAX-A9/free-token/main/install.sh | sh
+```
+
+脚本自动检查 Docker、拉取镜像、生成随机管理员密码、启动容器并打印访问地址 / 账号 / 密码。**重复执行即为升级**：自动检测已有容器，保留数据与密码。支持 `PORT=8080 sh ...` 指定端口、`LICENSE_KEY=授权码` 安装时直接激活。
+
+### 方式二：手动一条命令
 
 ```bash
 docker run -d --name freetoken -p 3000:3000 \
@@ -89,7 +92,7 @@ docker run -d --name freetoken -p 3000:3000 \
 
 数据保存在 `freetoken-data` 卷。升级：`docker pull ghcr.io/max-a9/freetoken:latest`，`docker rm -f freetoken` 后重新执行上面命令，数据自动继承。
 
-### 方式二：Docker Compose
+### 方式三：Docker Compose
 
 ```yaml
 services:
