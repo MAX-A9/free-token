@@ -110,10 +110,6 @@ services:
 ADMIN_PASSWORD=你的强密码 docker compose up -d
 ```
 
-### 方式三：离线安装
-
-从 [Releases](https://github.com/MAX-A9/free-token/releases) 下载镜像压缩包与编排文件，`docker load -i freetoken-image-1.0.0.tar.gz` 后 `docker compose up -d`。
-
 首次启动自动完成：建库（SQLite 单文件）→ 导入 68 个种子站点 → 创建管理员 → 生成 JWT 密钥，全程无需手动初始化。
 
 常用环境变量：`PORT`（默认 3000）、`DB_PATH`、`SITE_NAME`、`SITE_URL`（SEO 必填）、`MAX_STATIONS`（站点上限，0 不限）。
