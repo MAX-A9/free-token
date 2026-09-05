@@ -45,11 +45,14 @@ RUN_ENV="-e DB_PATH=/data/freetoken.db -e ADMIN_PASSWORD=$PASSWORD"
 if [ -n "$LICENSE_KEY" ]; then
   RUN_ENV="$RUN_ENV -e LICENSE_KEY=$LICENSE_KEY"
 fi
-docker run -d --name "$NAME" -p "${PORT}:3000" \
+if ! docker run -d --name "$NAME" -p "${PORT}:3000" \
   -v freetoken-data:/data \
   $RUN_ENV \
   --restart unless-stopped \
-  "$IMAGE" >/dev/null
+  "$IMAGE" >/dev/null; then
+  echo "错误: 容器启动失败。常见原因：端口 $PORT 已被占用，可换端口重试，如 PORT=8080 sh install.sh" >&2
+  exit 1
+fi
 
 echo "==> [5/5] 等待服务就绪 ..."
 STATUS="starting"
