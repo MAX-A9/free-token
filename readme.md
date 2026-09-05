@@ -18,7 +18,7 @@ docker run -d --name freetoken -p 3000:3000 \
   ghcr.io/max-a9/freetoken:latest
 ```
 
-启动后访问 `http://服务器IP:3000`（首次启动自动初始化，按页面提示完成授权激活即可），管理后台在 `/admin`。
+启动后访问 `http://服务器IP:3000`，首次启动自动完成初始化，在激活页填入授权码即可使用（无需其它配置），管理后台在 `/admin`。
 
 ---
 
