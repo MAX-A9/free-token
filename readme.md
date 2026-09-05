@@ -1,7 +1,7 @@
 # FreeTokenHub — AI Token 中转站导航平台
 
 > 开箱即用的 AI API 中转站导航站：**自动测活 · 自动比价 · SEO/GEO 双流量引擎**。
-> Go 单二进制部署，Docker 镜像仅约 20MB，一条命令安装，一台最低配 VPS 即可运营。
+> Docker 镜像仅约 20MB，一条命令安装，一台最低配 VPS 即可运营。
 
 ![Go](https://img.shields.io/badge/Go-1.23-00ADD8) ![Vue](https://img.shields.io/badge/Vue-3-4FC08D) ![SQLite](https://img.shields.io/badge/SQLite-单文件-003B57) ![Docker](https://img.shields.io/badge/Docker-一键部署-2496ED)
 
@@ -42,7 +42,7 @@ AI API 中转站（new-api / one-api 系）爆发式增长，用户找"免费、
 - 原生面向 **AI 搜索（GEO）**：内置 `llms.txt` / `llms-full.txt`（llmstxt.org 规范），放行 GPTBot、ClaudeBot、PerplexityBot、Bytespider 等 AI 爬虫
 - 当用户在 ChatGPT / Perplexity / 豆包里问"有哪些免费 AI 中转站"，你的站就是答案
 
-### 3. 20MB 单二进制，最低配 VPS 可跑
+### 3. 20MB Docker 镜像，最低配 VPS 可跑
 | 指标 | 数值 |
 |------|------|
 | Docker 镜像 | ~20MB（scratch 基础，三阶段构建） |
@@ -51,7 +51,7 @@ AI API 中转站（new-api / one-api 系）爆发式增长，用户找"免费、
 | 并发能力 | 单机 1000+ QPS |
 | 数据库 | SQLite 单文件（纯 Go 驱动，无 CGO），复制即备份 |
 
-管理后台（Vue 3 + Vite + Element Plus）构建产物通过 `go:embed` 直接嵌入二进制——**一个文件就是整个产品**，也可以不经 Docker 在本机直接运行。
+管理后台（Vue 3 + Vite + Element Plus）构建产物通过 `go:embed` 直接嵌入镜像——**一个文件就是整个产品**。
 
 ### 4. 内置 68 个种子站点
 首次启动自动导入 68 个真实中转站数据，上线即有内容，无需冷启动。
@@ -102,7 +102,7 @@ docker run --rm -v freetoken-data:/data -v $(pwd):/backup alpine cp /data/freeto
 ## 六、FAQ
 
 **Q: 需要什么配置的服务器？**
-A: 任意 1 核 1G VPS 即可。SQLite 无外部依赖，支持 Docker、裸机二进制、本机直接运行三种形态。
+A: 任意 1 核 1G VPS 即可（需已安装 Docker），一条脚本命令完成部署。SQLite 无外部依赖，数据卷持久化，升级不丢数据。
 
 **Q: 数据怎么备份？**
 A: SQLite 单文件，`cp` 即备份，恢复即替换（具体路径见「数据与升级」）。
@@ -114,7 +114,7 @@ A: Go 1.23 + chi + Vue 3 全部为主流技术栈，模块划分清晰（handler
 
 - 产品说明仓库：<https://github.com/MAX-A9/free-token>
 - Docker 镜像：`ghcr.io/max-a9/freetoken`
-- 试用 / 购买 / 定制：**请联系作者**（微信 / Telegram / 邮箱 —— 此处补充你的联系方式）
+- 试用 / 购买 / 定制：**请联系作者**（微信 / QQ /  —— zl93339 / 1102465916）
 
 ---
 
