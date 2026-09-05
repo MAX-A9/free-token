@@ -7,6 +7,21 @@
 
 ---
 
+## 快速开始
+
+```bash
+docker run -d --name freetoken -p 3000:3000 \
+  -v freetoken-data:/data \
+  -e DB_PATH=/data/freetoken.db \
+  -e ADMIN_PASSWORD=你的强密码 \
+  --restart unless-stopped \
+  ghcr.io/max-a9/freetoken:latest
+```
+
+启动后访问 `http://服务器IP:3000`（首次启动自动初始化，按页面提示完成授权激活即可），管理后台在 `/admin`。
+
+---
+
 ## 一、为什么做这个产品
 
 AI API 中转站（new-api / one-api 系）爆发式增长，用户找"免费、可用、便宜"的中转站时面临三大痛点：
@@ -61,22 +76,43 @@ Vue 3 + Element Plus 机甲风主题，仪表盘 / 站点管理 / 投稿审核 /
 
 ## 四、5 分钟部署
 
-交付包内置 Docker 镜像与编排文件，三步上线：
+### 方式一：一条命令（推荐）
 
 ```bash
-# 1. 导入镜像（或使用提供的源码包构建）
-docker load < freetoken-image.tar
-
-# 2. 配置管理员
-export ADMIN_USERNAME=admin
-export ADMIN_PASSWORD=你的强密码
-
-# 3. 启动
-docker compose up -d
-
-# 前台: http://your-server:3000
-# 后台: http://your-server:3000/admin
+docker run -d --name freetoken -p 3000:3000 \
+  -v freetoken-data:/data \
+  -e DB_PATH=/data/freetoken.db \
+  -e ADMIN_PASSWORD=你的强密码 \
+  --restart unless-stopped \
+  ghcr.io/max-a9/freetoken:latest
 ```
+
+数据保存在 `freetoken-data` 卷。升级：`docker pull ghcr.io/max-a9/freetoken:latest`，`docker rm -f freetoken` 后重新执行上面命令，数据自动继承。
+
+### 方式二：Docker Compose
+
+```yaml
+services:
+  freetoken:
+    image: ghcr.io/max-a9/freetoken:latest
+    container_name: freetoken
+    ports: ["3000:3000"]
+    volumes: ["./data:/data"]
+    environment:
+      - PORT=3000
+      - DB_PATH=/data/freetoken.db
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - SITE_URL=${SITE_URL:-http://localhost:3000}
+    restart: unless-stopped
+```
+
+```bash
+ADMIN_PASSWORD=你的强密码 docker compose up -d
+```
+
+### 方式三：离线安装
+
+从 [Releases](https://github.com/MAX-A9/free-token/releases) 下载镜像压缩包与编排文件，`docker load -i freetoken-image-1.0.0.tar.gz` 后 `docker compose up -d`。
 
 首次启动自动完成：建库（SQLite 单文件）→ 导入 68 个种子站点 → 创建管理员 → 生成 JWT 密钥，全程无需手动初始化。
 
@@ -102,8 +138,9 @@ A: Go 1.23 + chi + Vue 3 全部为主流技术栈，模块划分清晰（handler
 ## 七、联系与获取
 
 - 产品说明仓库：<https://github.com/MAX-A9/free-token>
+- Docker 镜像：`ghcr.io/max-a9/freetoken`
 - 试用 / 购买 / 定制：**请联系作者**（微信 / Telegram / 邮箱 —— 此处补充你的联系方式）
 
 ---
 
-> FreeTokenHub © 2026 MAX-A9 · 本页为产品销售文档，交付物（镜像 / 源码包）通过私下渠道提供。
+> FreeTokenHub © 2026 MAX-A9 · 本页为产品销售文档，镜像托管于 ghcr.io（见「快速开始」），源码包通过私下渠道提供。
