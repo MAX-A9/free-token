@@ -1,7 +1,7 @@
 # FreeTokenHub — AI Token 中转站导航平台
 
 > 开箱即用的 AI API 中转站导航站：**自动测活 · 自动比价 · SEO/GEO 双流量引擎**。
-> Go 单二进制部署，Docker 镜像仅约 20MB，一台最低配 VPS 即可运营。
+> Go 单二进制部署，Docker 镜像仅约 20MB，一条命令安装，一台最低配 VPS 即可运营。
 
 ![Go](https://img.shields.io/badge/Go-1.23-00ADD8) ![Vue](https://img.shields.io/badge/Vue-3-4FC08D) ![SQLite](https://img.shields.io/badge/SQLite-单文件-003B57) ![Docker](https://img.shields.io/badge/Docker-一键部署-2496ED)
 
@@ -104,7 +104,7 @@ services:
     environment:
       - PORT=3000
       - DB_PATH=/data/freetoken.db
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?请先设置 ADMIN_PASSWORD，如 export ADMIN_PASSWORD=你的强密码}
       - SITE_URL=${SITE_URL:-http://localhost:3000}
     restart: unless-stopped
 ```
@@ -113,9 +113,15 @@ services:
 ADMIN_PASSWORD=你的强密码 docker compose up -d
 ```
 
-首次启动自动完成：建库（SQLite 单文件）→ 导入 68 个种子站点 → 创建管理员 → 生成 JWT 密钥，全程无需手动初始化。
+首次启动自动完成：建库（SQLite 单文件）→ 导入 68 个种子站点 → 创建管理员 → 生成 JWT 密钥，全程无需手动初始化。未填授权码时，首次打开站点会自动跳转激活页，填入授权码即可使用。
 
-常用环境变量：`PORT`（默认 3000）、`DB_PATH`、`SITE_NAME`、`SITE_URL`（SEO 必填）、`MAX_STATIONS`（站点上限，0 不限）。
+常用环境变量：`PORT`（默认 3000）、`DB_PATH`、`ADMIN_PASSWORD`（必填）、`LICENSE_KEY`（授权码，不填则在激活页输入）、`SITE_NAME`、`SITE_URL`（SEO 必填）、`MAX_STATIONS`（站点上限，0 不限）。
+
+### 数据与升级
+
+- **数据安全**：数据保存在 `freetoken-data` 卷（compose 方式为 `./data` 目录），升级、重建容器均不丢失
+- **升级**：重新执行一键脚本（自动保留数据与密码），或拉取新镜像后重建容器
+- **备份**：SQLite 单文件，`cp` 即备份——compose 部署直接复制 `./data/freetoken.db`，脚本部署可从 `freetoken-data` 卷拷出
 
 ## 五、适用场景
 
@@ -129,7 +135,7 @@ ADMIN_PASSWORD=你的强密码 docker compose up -d
 A: 任意 1 核 1G VPS 即可。SQLite 无外部依赖，支持 Docker、裸机二进制、本机直接运行三种形态。
 
 **Q: 数据怎么备份？**
-A: SQLite 单文件，`cp` 即备份，恢复即替换。
+A: SQLite 单文件，`cp` 即备份，恢复即替换（具体路径见「数据与升级」）。
 
 **Q: 可以二次开发吗？**
 A: Go 1.23 + chi + Vue 3 全部为主流技术栈，模块划分清晰（handlers / prober / i18n 等），交付文档含完整 API 列表与部署手册。
